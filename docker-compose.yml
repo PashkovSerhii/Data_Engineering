@@ -1,0 +1,51 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: adtech_mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: adtech_db
+      MYSQL_USER: adtech_user
+      MYSQL_PASSWORD: adtech_pass
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./sql:/docker-entrypoint-initdb.d
+    networks:
+      - adtech_network
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: adtech_phpmyadmin
+    environment:
+      PMA_HOST: mysql
+      PMA_USER: root
+      PMA_PASSWORD: password
+    ports:
+      - "8080:80"
+    depends_on:
+      - mysql
+    networks:
+      - adtech_network
+
+  adtech_python:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: adtech_python
+    volumes:
+      - ./data:/app/data
+      - ./transforms_data.py:/app/transforms_data.py
+      - ./requirements.txt:/app/requirements.txt
+    depends_on:
+      - mysql
+    networks:
+      - adtech_network
+
+volumes:
+  mysql_data:
+
+networks:
+  adtech_network:
+    driver: bridge
