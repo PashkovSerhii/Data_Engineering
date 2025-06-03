@@ -1,9 +1,6 @@
 import pandas as pd
 import mysql.connector
 from mysql.connector import Error
-import uuid
-from datetime import datetime
-import re
 
 
 class AdTechDataTransformer:
@@ -32,17 +29,16 @@ class AdTechDataTransformer:
         ]
 
         # Зчитуємо CSV без заголовків
-        self.ad_events = pd.read_csv('data/raw/ad_events.csv', names=columns, header=0)
+        ad_events = pd.read_csv('data/raw/ad_events.csv', names=columns, header=None)
 
         # Об'єднуємо три частини TargetingCriteria в один стовпець
-        self.ad_events['TargetingCriteria'] = self.ad_events[
+        ad_events['TargetingCriteria'] = ad_events[
             ['TargetingCriteria1', 'TargetingCriteria2', 'TargetingCriteria3']].apply(
             lambda row: ', '.join(row.astype(str)).strip(), axis=1
         )
 
         # Видаляємо зайві колонки
-        self.ad_events.drop(['TargetingCriteria1', 'TargetingCriteria2', 'TargetingCriteria3'], axis=1, inplace=True)
-
+        self.ad_events = ad_events.drop(['TargetingCriteria1', 'TargetingCriteria2', 'TargetingCriteria3'], axis=1)
         self.campaigns = pd.read_csv('data/raw/campaigns.csv')
         self.users = pd.read_csv('data/raw/users.csv')
         print(
@@ -287,12 +283,12 @@ config = {
     'password': 'adtech_pass'
 }
 
-# Використання
-if __name__ == "__main__":
-    transformer = AdTechDataTransformer(config)
+# # Використання
+# if __name__ == "__main__":
+transformer = AdTechDataTransformer(config)
 
-    # Запуск з очищенням даних (якщо потрібно)
-    transformer.run_full_import(clear_data=True)  # True для очищення існуючих даних
+# Запуск з очищенням даних (якщо потрібно)
+transformer.run_full_import(clear_data=True)  # True для очищення існуючих даних
 
-    # Або без очищення (дані додадуться до існуючих)
-    # transformer.run_full_import(clear_data=False)
+# Або без очищення (дані додадуться до існуючих)
+# transformer.run_full_import(clear_data=False)
