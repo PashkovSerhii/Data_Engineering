@@ -29,7 +29,7 @@ class AdTechDataTransformer:
         ]
 
         # Зчитуємо CSV без заголовків
-        ad_events = pd.read_csv('data/raw/ad_events.csv', names=columns, header=None)
+        ad_events = pd.read_csv('data/raw/ad_events.csv', names=columns, skiprows=1, header=None)
 
         # Об'єднуємо три частини TargetingCriteria в один стовпець
         ad_events['TargetingCriteria'] = ad_events[

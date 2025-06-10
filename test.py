@@ -17,7 +17,8 @@ columns = [
 ]
 
 # Зчитуємо CSV без заголовків
-ad_events = pd.read_csv('data/raw/ad_events.csv', names=columns, header=0, nrows=5)
+# ad_events = pd.read_csv('data/raw/ad_events.csv', names=columns, header=0, nrows=5)
+ad_events = pd.read_csv('data/raw/ad_events.csv', names=columns, nrows=5, skiprows=1)
 
 # Об'єднуємо три частини TargetingCriteria в один стовпець
 ad_events['TargetingCriteria'] = ad_events[['TargetingCriteria1', 'TargetingCriteria2', 'TargetingCriteria3']].apply(
